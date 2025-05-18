@@ -107,9 +107,10 @@
                 </div>
             </div>
 
-            {{-- Flashcards Table --}}
+            {{-- Flashcards Table with Bulk Delete Form --}}
             <form id="bulk-delete-form" method="POST" action="{{ route('cards.bulkDelete') }}">
                 @csrf
+                @method('DELETE')
                 <div class="bg-white rounded-xl shadow-md border border-gray-100">
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200">
@@ -218,14 +219,20 @@
                     cardCheckboxes.forEach(checkbox => {
                         checkbox.addEventListener('change', function() {
                             const allChecked = document.querySelectorAll('.card-checkbox:checked').length === cardCheckboxes.length;
+                            const anyChecked = document.querySelectorAll('.card-checkbox:checked').length > 0;
                             selectAllCheckbox.checked = allChecked;
+                            selectAllCheckbox.indeterminate = anyChecked && !allChecked;
                             updateDeleteButtonState();
                         });
                     });
                     
                     // Delete selected cards
                     deleteSelectedButton.addEventListener('click', function() {
-                        if(confirm('Are you sure you want to delete all selected cards?')) {
+                        const selectedCount = document.querySelectorAll('.card-checkbox:checked').length;
+                        if(confirm(`Are you sure you want to delete ${selectedCount} selected card(s)?`)) {
+                            // Add visual feedback
+                            deleteSelectedButton.disabled = true;
+                            deleteSelectedButton.innerHTML = '<svg class="animate-spin h-5 w-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Deleting...';
                             bulkDeleteForm.submit();
                         }
                     });
