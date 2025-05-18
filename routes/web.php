@@ -34,7 +34,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/cards/{id}/review', [CardsController::class, 'review'])->name('cards.review');
     Route::get('/cards/{id}/review/next', [CardsController::class, 'nextReview'])->name('cards.nextReview');
     Route::get('/cards/{id}/review/previous', [CardsController::class, 'previousReview'])->name('cards.previousReview');
-    
+
+    // Bulk delete route
+    Route::post('/cards/bulk-delete', [CardsController::class, 'bulkDelete'])->name('cards.bulkDelete');
+
     // Resource routes for standard CRUD operations
     Route::resource('cards', CardsController::class);
 });
